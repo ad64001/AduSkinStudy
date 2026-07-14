@@ -35,7 +35,8 @@ namespace AduSkin.Demo.ViewModel
       private double imageControlWidth;
       [ObservableProperty]
       private double imageControlHeight;
-
+      [ObservableProperty]
+      private string _StatusMessage = string.Empty;
 
 
       //======================
@@ -50,11 +51,11 @@ namespace AduSkin.Demo.ViewModel
 
          dialog.Filter =
          "图片|*.jpg;*.png;*.bmp";
-         if (dialog.ShowDialog() != true)
+         if (dialog.ShowDialog() != DialogResult.OK)
             return;
          _source = Cv2.ImRead(dialog.FileName);
          DisplayImageSource = BitmapSourceConverter.ToBitmapSource(_source);
-         StatusMessage = "图片加载完成";
+         _StatusMessage = "图片加载完成";
 
       }
 
@@ -70,7 +71,40 @@ namespace AduSkin.Demo.ViewModel
 
          if (_source == null)
             return;
-         Mat roi = new Mat(_source,new OpenCvSharp.Rect((int)RectX,(int)RectY,(int)RectWidth,(int)RectHeight));
+
+         // 1. 获取图像的实际边界
+         int cols = _source.Cols;
+         int rows = _source.Rows;
+
+         // 2. 计算原始坐标和宽高
+         int x = (int)RectX;
+         int y = (int)RectY;
+         int w = (int)RectWidth;
+         int h = (int)RectHeight;
+
+         // 3. 强制修正坐标，确保起点不小于 (0,0)
+         x = Math.Max(0, x);
+         y = Math.Max(0, y);
+
+         // 4. 强制修正宽高，确保终点不超过图像边界 (cols, rows)
+         // 如果 x 已经超出边界，w 会被修正为 0 或负数，后续需处理
+         if (x + w > cols)
+            w = cols - x;
+
+         if (y + h > rows)
+            h = rows - y;
+
+         // 5. 最终有效性检查：防止宽或高为负数或0（例如选区完全在图像外）
+         if (w <= 0 || h <= 0)
+         {
+            // 选区无效，直接返回，避免创建 Mat 报错
+            // 这里可以根据需求选择清空结果或提示用户
+            return;
+         }
+
+         // 6. 使用修正后的安全坐标创建 ROI
+         OpenCvSharp.Rect safeRect = new OpenCvSharp.Rect(x, y, w, h);
+         Mat roi = new Mat(_source, safeRect);
 
          Mat gray = new();
 
@@ -84,7 +118,7 @@ namespace AduSkin.Demo.ViewModel
 
          DisplayImageSource = BitmapSourceConverter.ToBitmapSource(result);
 
-         StatusMessage = $"发现轮廓数量:{contours.Length}";
+         _StatusMessage = $"发现轮廓数量:{contours.Length}";
 
       }
 

@@ -70,7 +70,7 @@ namespace AduSkin.Demo.Views
          vm.IsSelecting = false;
          vm.ImageControlWidth = MainImage.ActualWidth;
          vm.ImageControlHeight = MainImage.ActualHeight;
-         vm.StatusMessage = "ROI选择完成，请点击提取轮廓";
+         //vm.StatusMessage = "ROI选择完成，请点击提取轮廓";
 
 
       }
