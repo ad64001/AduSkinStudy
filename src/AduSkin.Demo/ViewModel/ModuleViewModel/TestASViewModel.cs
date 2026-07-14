@@ -1,55 +1,104 @@
 using AduSkin.Demo.Data.Enum;
+using AduSkin.Demo.Data.Utils;
 using AduSkin.Demo.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace AduSkin.Demo.ViewModel
 {
    public partial class TestASViewModel : ObservableObject
    {
-      public TestASViewModel() {
-         AllSupports.Add(new TestA("不愿意透露姓名的网友", "tencent://message/?uin=870856195&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=870856195&spec=100", "", new string[] { SupportType.Money.ToString() + "：100元" }));
-         AllSupports.Add(new TestA("沙漠尽头的狼 dotnet9.com", "tencent://message/?uin=632871194&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=632871194&spec=100", "", new string[] { SupportType.Skill.ToString(), SupportType.Extension.ToString() }));
-         AllSupports.Add(new TestA("关关", "tencent://message/?uin=2453966523&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=2453966523&spec=100", "", new string[] { SupportType.Skill.ToString(), SupportType.Extension.ToString() }));
-         AllSupports.Add(new TestA("Tom", "tencent://message/?uin=17379620&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=17379620&spec=100", "", new string[] { SupportType.Skill.ToString(), SupportType.Extension.ToString(), SupportType.Money.ToString() + "：350元" }));
-         AllSupports.Add(new TestA("KING", "tencent://message/?uin=1061973727&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=1061973727&spec=100", "", new string[] { SupportType.Skill.ToString() }));
-         AllSupports.Add(new TestA("CJ", "tencent://message/?uin=836904362&Site=&Menu=yes", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=836904362&spec=100", "", new string[] { SupportType.Skill.ToString() }));
-         AllSupports.Add(new TestA("FOX-Yu", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=435892115&spec=100", "", new string[] { SupportType.Money.ToString() + "：88元" }));
-         AllSupports.Add(new TestA("不愿意透露姓名的网友", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=2603473237&spec=100", "", new string[] { SupportType.Money.ToString() + "：300元" }));
-         AllSupports.Add(new TestA("那年", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=407564418&spec=100", "", new string[] { SupportType.Money.ToString() + "：100元" }));
-         AllSupports.Add(new TestA("不染", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=906247584&spec=100", "", new string[] { SupportType.Money.ToString() + "：50元" }));
-         AllSupports.Add(new TestA("MiFaFa", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=2447786794&spec=100", "", new string[] { SupportType.Money.ToString() + "：66元" }));
-         AllSupports.Add(new TestA("✘小浪", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=2398387230&spec=100", "", new string[] { SupportType.Money.ToString() + "：100元" }));
-         AllSupports.Add(new TestA("懒猫", "", "http://q.qlogo.cn/headimg_dl?bs=qq&dst_uin=8080697&spec=100", "", new string[] { SupportType.Money.ToString() + "：100元" }));
-
-      }
-
-      /// <summary>
-      /// 赞助人
-      /// </summary>
+      private Mat? _source;
       [ObservableProperty]
-      private ObservableCollection<TestA> _allSupports = new ObservableCollection<TestA>();
+      private ImageSource? displayImageSource;
+      [ObservableProperty]
+      private bool isSelecting;
+      [ObservableProperty]
+      private double rectX;
+      [ObservableProperty]
+      private double rectY;
+      [ObservableProperty]
+      private double rectWidth;
+      [ObservableProperty]
+      private double rectHeight;
+      [ObservableProperty]
+      private double imageControlWidth;
+      [ObservableProperty]
+      private double imageControlHeight;
 
-      /// <summary>
-      /// 命令Command
-      /// </summary>
+
+
+      //======================
+      //加载图片
+      //======================
+
       [RelayCommand]
-      public void Open(string e)
+      private void LoadImage()
       {
-         switch (e)
-         {
-            case "Reward":
-               IsOpenReward = true;
-               return;
-         }
+
+         OpenFileDialog dialog = new();
+
+         dialog.Filter =
+         "图片|*.jpg;*.png;*.bmp";
+         if (dialog.ShowDialog() != true)
+            return;
+         _source = Cv2.ImRead(dialog.FileName);
+         DisplayImageSource = BitmapSourceConverter.ToBitmapSource(_source);
+         StatusMessage = "图片加载完成";
+
       }
-      [ObservableProperty]
-      private bool _isOpenReward;
+
+
+      //======================
+      //提取轮廓
+      //======================
+
+
+      [RelayCommand]
+      private void ExtractContours()
+      {
+
+         if (_source == null)
+            return;
+         Mat roi = new Mat(_source,new OpenCvSharp.Rect((int)RectX,(int)RectY,(int)RectWidth,(int)RectHeight));
+
+         Mat gray = new();
+
+         Cv2.CvtColor(roi,gray,ColorConversionCodes.BGR2GRAY);
+         Mat edge = new();
+         Cv2.Canny(gray,edge,80,150);
+         Mat result = roi.Clone();
+
+         Cv2.FindContours(edge,out Point[][] contours,out _,RetrievalModes.External,ContourApproximationModes.ApproxSimple);
+         Cv2.DrawContours(result,contours,-1,Scalar.Red,2);
+
+         DisplayImageSource = BitmapSourceConverter.ToBitmapSource(result);
+
+         StatusMessage = $"发现轮廓数量:{contours.Length}";
+
+      }
+
+
+      [RelayCommand]
+      private void ClearContours()
+      {
+         if (_source != null)
+            DisplayImageSource =
+            BitmapSourceConverter.ToBitmapSource(_source);
+      }
+
+     
+
+
    }
 }
