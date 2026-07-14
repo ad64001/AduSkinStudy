@@ -222,8 +222,8 @@
             <ContentControl Content="{Binding AduSkinSupport}"/>
          </AduSkin:AduTabItem>
          <AduSkin:AduTabItem Header="测试">
-           <!-- <ContentControl Content="{Binding AduSkinSupport}"/> -->
-            
+             <!-- <ContentControl Content="{Binding AduSkinSupport}"/> -->
+             <ContentControl Content="{Binding TestAS}"/> 
          </AduSkin:AduTabItem>
       </AduSkin:AduTabControl>
    </Grid>
