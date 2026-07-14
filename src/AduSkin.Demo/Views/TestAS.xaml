@@ -22,23 +22,8 @@
          <RowDefinition/>
       </Grid.RowDefinitions>
       <StackPanel  VerticalAlignment="Center" Margin="0,10">
-         <TextBlock Style="{StaticResource H2}" Text="技术支持和赞助" Foreground="{DynamicResource NormalForeground}" FontWeight="Bold" Margin="0,20"/>
-         <TextBlock FontSize="14" HorizontalAlignment="Center" Text="赞助支持请点赞【蛇年红包】，完成后联系作者可加入赞助墙，感谢大佬的支持！" FontWeight="Light"/>
-         <Border HorizontalAlignment="Center">
-            <StackPanel>
-               <UniformGrid Columns="2">
-                  <StackPanel>
-                     <TextBlock FontSize="16" Text="支付宝" Margin="0,10"/>
-                     <Image Width="120" Height="120" Source="http://m.qpic.cn/psc?/V12WtbKq3d7FCg/ruAMsa53pVQWN7FLK88i5i.E7kji6g6vbNhQMB*dUSedlhf0R6lXK68tVUSxFySLZvg3jRMuCEhLdRv5Mb*2RTaP7E33Ft4mJ3rPdEjHjMQ!/b&amp;bo=.QICA*kCAgMBCS4!&amp;rf=viewer_4"/>
-                  </StackPanel>
-                  <StackPanel>
-                     <TextBlock FontSize="16" Text="微信" Margin="0,10"/>
-                     <Image Width="120" Height="120" Source="http://m.qpic.cn/psc?/V12WtbKq3d7FCg/ruAMsa53pVQWN7FLK88i5qgkLIK97iDKThLo2O3Wa1DdyryWT1VA.PSo289S7PWRUksBj8rVFEUpsIKvvl2uRJcuNsqj8Xsr9oF0A6gCELY!/b&amp;bo=rAKwAqwCsAIBCS4!&amp;rf=viewer_4"/>
-                  </StackPanel>
-               </UniformGrid>
-               <TextBlock FontSize="16" Text="(*召)" HorizontalAlignment="Center" Margin="0,10"/>
-            </StackPanel>
-         </Border>
+         <TextBlock Style="{StaticResource H2}" Text="大测试" Foreground="{DynamicResource NormalForeground}" FontWeight="Bold" Margin="0,20"/>
+         
          <AduSkin:AduTransitioningContentControl TransitionStoryboard="{StaticResource Custom2Transition}">
             <AduSkin:AduPathIconButton Name="OpenReward"
             Command="{Binding OpenCommand}" CommandParameter="Reward"
@@ -55,79 +40,5 @@
          </AduSkin:AduTransitioningContentControl>
          <!--</Popup>-->
       </StackPanel>
-      <ItemsControl Grid.Row="1" ItemsSource="{Binding AllSupports}"  
-         Margin="40,0,40,40">
-         <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-               <WrapPanel />
-            </ItemsPanelTemplate>
-         </ItemsControl.ItemsPanel>
-         <ItemsControl.ItemTemplate>
-            <DataTemplate>
-               <Border x:Name="Bd" MinHeight="100" Background="{DynamicResource PanelBackground}" Margin="10" Cursor="Hand"
-            BorderBrush="{DynamicResource NormalBorderBrush}" BorderThickness="1"
-            CornerRadius="10" Effect="{StaticResource PanelShadow}">
-                  <Grid>
-                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition />
-                     </Grid.ColumnDefinitions>
-                     <Border Width="70" Height="70" CornerRadius="10" BorderThickness="2" BorderBrush="{DynamicResource NormalBorderBrush}">
-                        <Border.Background>
-                           <ImageBrush ImageSource="{Binding Header}" Stretch="UniformToFill"/>
-                        </Border.Background>
-                     </Border>
-                     <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,20,0">
-                        <TextBlock x:Name="txtName" Text="{Binding Name}" FontSize="14"  TextAlignment="Left" FontWeight="Bold"
-                     TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" MaxWidth="150">
-                           <TextBlock.ToolTip>
-                              <AduSkin:AduToolTip Content="{Binding Name}" IsShowShadow="True" FontSize="12" FontWeight="Bold" 
-                           Foreground="{DynamicResource NormalForeground}" Padding="20,10" PlacementEx="TopCenter" />
-                           </TextBlock.ToolTip>
-                        </TextBlock>
-                        <ItemsControl
-                      Margin="0,4"
-                      HorizontalAlignment="Left"
-                      FocusVisualStyle="{x:Null}"
-                      ItemsSource="{Binding SupportTypes}">
-                           <ItemsControl.ItemsPanel>
-                              <ItemsPanelTemplate>
-                                 <StackPanel Orientation="Horizontal" />
-                              </ItemsPanelTemplate>
-                           </ItemsControl.ItemsPanel>
-                           <ItemsControl.ItemTemplate>
-                              <DataTemplate>
-                                 <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="2" Background="{DynamicResource NormalBackground}" CornerRadius="2">
-                                    <TextBlock Text="{Binding }" Margin="4,2" FontSize="10" Foreground="{DynamicResource NormalForeground}" />
-                                 </Border>
-                                 <DataTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-
-                                    </Trigger>
-                                 </DataTemplate.Triggers>
-                              </DataTemplate>
-                           </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <AduSkin:AduFlatButton x:Name="btnContact" Visibility="Collapsed" Content="发起聊天" Margin="2,0" Height="18" Width="50" CornerRadius="2" FontSize="10" 
-                        Command="AduOpenLink:ControlCommands.OpenLink" CommandParameter="{Binding Contact}" FontWeight="Light" HorizontalAlignment="Left"/>
-                     </StackPanel>
-                  </Grid>
-               </Border>
-               <DataTemplate.Triggers>
-                  <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}"  Value="True">
-                     <Setter TargetName="Bd" Property="BorderBrush" Value="#DBDBDB" />
-                  </DataTrigger>
-                  <MultiTrigger>
-                     <MultiTrigger.Conditions>
-                        <Condition Property="IsMouseOver" Value="True" />
-                     </MultiTrigger.Conditions>
-                     <Setter TargetName="txtName" Property="Foreground" Value="{DynamicResource MouseOverForeground}"/>
-                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MouseOverBackground}" />
-                     <Setter TargetName="Bd" Property="Effect" Value="{DynamicResource PanelShadow}" />
-                  </MultiTrigger>
-               </DataTemplate.Triggers>
-            </DataTemplate>
-         </ItemsControl.ItemTemplate>
-      </ItemsControl>
    </Grid>
 </UserControl>

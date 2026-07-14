@@ -20,6 +20,7 @@ namespace AduSkin.Demo.ViewModel
          PracticalCase = serviceProvider.GetRequiredService<PracticalCase>();
          AduSkinAbout = serviceProvider.GetRequiredService<AduSkinAbout>();
          AduSkinSupport = serviceProvider.GetRequiredService<AduSkinSupport>();
+         TestAS = serviceProvider.GetRequiredService<TestAS>();
       }
 
       /// <summary>
@@ -80,5 +81,8 @@ namespace AduSkin.Demo.ViewModel
       /// </summary>
       [ObservableProperty]
       private UserControl _aduSkinSupport;
+
+      [ObservableProperty]
+      private UserControl _testAS;
    }
 }
