@@ -221,6 +221,10 @@
          <AduSkin:AduTabItem Header="技术支持">
             <ContentControl Content="{Binding AduSkinSupport}"/>
          </AduSkin:AduTabItem>
+         <AduSkin:AduTabItem Header="测试">
+           <!-- <ContentControl Content="{Binding AduSkinSupport}"/> -->
+            
+         </AduSkin:AduTabItem>
       </AduSkin:AduTabControl>
    </Grid>
 </AduSkin:MetroWindow>
